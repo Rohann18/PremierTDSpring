@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +28,9 @@ public class SolisteController {
 	}
 	
 	@PostMapping("saveSoliste")
-	public String saveSoliste(Soliste s) {
+	public String saveSoliste(@ModelAttribute("soliste") Soliste s) {
 		solisteService.saveSoliste(s);
-		return "tableSoliste";
+		return "redirect:getAllSoliste";
 	}
 	
 	@GetMapping("getAllSoliste")
@@ -43,13 +45,21 @@ public class SolisteController {
 		return "tableSoliste";
 	}
 	
-	@PutMapping("updateSoliste")
-	public String updateSoliste(@RequestParam(value="id") Long id, Model m) {
-		return "tableSoliste";
+	@PostMapping("updateSoliste")
+	public String updateSoliste(@ModelAttribute("solist") Soliste s, Model m) {
+		solisteService.updateSoliste(s);
+		return "redirect:/soliste/getAllSoliste";
 	}
 	
-	@DeleteMapping("deleteSoliste")
-	public void deleteSoliste(@RequestParam(value = "id") Long id, Model m) {
+	@DeleteMapping("deleteSoliste/{id}")
+	public String deleteSoliste(@PathVariable(value = "id") Long id, Model m) {
 		solisteService.deleteSoliste(id);
+		return "redirect:/soliste/getAllSoliste";
+	}
+	
+	@GetMapping("modifSoliste/{id}")
+	public String modifSoliste(@PathVariable(value = "id") Long id, Model m) {
+		m.addAttribute("soliste", solisteService.getSoliste(id));
+		return "modifSoliste";
 	}
 }
